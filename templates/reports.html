@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}报告中心 - AI副业助手{% endblock %}
+{% block content %}
+
+<div style="padding: 12px 16px; display: flex; gap: 10px;">
+    <a href="{{ url_for('daily_report') }}" class="btn btn-primary btn-block" style="flex: 1;">📈 生成今日报告</a>
+    <a href="{{ url_for('lessons_list') }}" class="btn btn-outline btn-block" style="flex: 1;">📚 学习中心</a>
+</div>
+
+<div class="section-title">📊 历史报告</div>
+{% if reports %}
+    {% for r in reports %}
+    <div class="report-section">
+        <div class="report-date">📅 {{ r.report_date }}</div>
+        <div class="report-grid">
+            <div class="report-block">
+                <div class="label">收入</div>
+                <div class="value" style="color: var(--success)">¥{{ "%.2f"|format(r.revenue) }}</div>
+            </div>
+            <div class="report-block">
+                <div class="label">净利润</div>
+                <div class="value" style="color: var(--primary)">¥{{ "%.2f"|format(r.net_profit) }}</div>
+            </div>
+            <div class="report-block">
+                <div class="label">销量</div>
+                <div class="value">{{ r.sales_count }} 单</div>
+            </div>
+            <div class="report-block">
+                <div class="label">成本</div>
+                <div class="value" style="color: var(--danger)">¥{{ "%.2f"|format(r.cost) }}</div>
+            </div>
+        </div>
+        {% if r.top_product %}
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">🔥 热销：{{ r.top_product }}</div>
+        {% endif %}
+        {% if r.lessons_learned %}
+        <div style="font-size: 12px; color: var(--warning); margin-top: 6px;">💡 {{ r.lessons_learned }}</div>
+        {% endif %}
+        {% if r.tomorrow_plan %}
+        <div style="font-size: 12px; color: var(--secondary); margin-top: 6px;">📋 {{ r.tomorrow_plan }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <div class="emoji">📊</div>
+        <div>还没有报告</div>
+        <a href="{{ url_for('daily_report') }}" class="btn btn-primary" style="margin-top: 16px;">📈 生成今日报告</a>
+    </div>
+{% endif %}
+
+{% endblock %}

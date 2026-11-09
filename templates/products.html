@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}产品管理 - AI副业助手{% endblock %}
+{% block content %}
+
+<div style="display: flex; gap: 10px; padding: 12px 16px;">
+    <a href="{{ url_for('product_generate') }}" class="btn btn-primary btn-block" style="flex: 1;">✨ 自动生成产品</a>
+    <a href="{{ url_for('product_new') }}" class="btn btn-outline btn-block" style="flex: 1;">📝 手动创建</a>
+</div>
+
+<!-- 状态筛选 -->
+<div class="tabs">
+    <a href="{{ url_for('products_list') }}" class="tab {% if not status_filter %}active{% endif %}">全部</a>
+    <a href="{{ url_for('products_list', status='active') }}" class="tab {% if status_filter == 'active' %}active{% endif %}">在售</a>
+    <a href="{{ url_for('products_list', status='draft') }}" class="tab {% if status_filter == 'draft' %}active{% endif %}">草稿</a>
+</div>
+
+{% if products %}
+    {% for p in products %}
+    <a href="{{ url_for('product_detail', pid=p.id) }}" class="product-card">
+        <div class="product-cover">{{ p.cover_emoji }}</div>
+        <div class="product-info">
+            <h3>{{ p.name }}</h3>
+            <div class="meta">
+                <span class="price">¥{{ p.price }}</span>
+                <span>🛒 {{ p.sales_count }}单</span>
+                <span>💰 ¥{{ "%.2f"|format(p.revenue) }}</span>
+            </div>
+            <div class="product-tags">
+                {% for t in (p.tags or '').split(',')[:3] %}
+                    {% if t %}<span class="product-tag">{{ t.strip() }}</span>{% endif %}
+                {% endfor %}
+            </div>
+            {% if p.status != 'active' %}
+                <span class="badge badge-gray" style="margin-top: 6px;">{{ p.status }}</span>
+            {% endif %}
+        </div>
+    </a>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <div class="emoji">📦</div>
+        <div>还没有产品</div>
+        <a href="{{ url_for('product_generate') }}" class="btn btn-primary" style="margin-top: 16px;">✨ 立刻生成一个</a>
+    </div>
+{% endif %}
+
+{% endblock %}

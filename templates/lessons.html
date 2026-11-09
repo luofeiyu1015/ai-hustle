@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}学习中心 - AI副业助手{% endblock %}
+{% block content %}
+
+<div style="padding: 12px 16px;">
+    <form method="POST" action="{{ url_for('lessons_add') }}">
+        <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+            <input type="text" name="title" class="form-control" placeholder="经验标题" required style="flex: 2;">
+            <input type="text" name="category" class="form-control" placeholder="分类" style="flex: 1;">
+        </div>
+        <input type="text" name="content" class="form-control" placeholder="学到了什么..." style="margin-bottom: 8px;">
+        <input type="text" name="action" class="form-control" placeholder="以后怎么做..." style="margin-bottom: 8px;">
+        <button type="submit" class="btn btn-primary btn-block">📝 记录新经验</button>
+    </form>
+</div>
+
+<div class="section-title">📚 所有经验</div>
+{% if lessons %}
+    {% for l in lessons %}
+    <div class="lesson-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="lesson-title">💡 {{ l.title }}</div>
+            <form method="POST" action="{{ url_for('lessons_delete', lid=l.id) }}" onsubmit="return confirm('删除这条经验？')">
+                <button type="submit" style="color: var(--text-light);">✕</button>
+            </form>
+        </div>
+        {% if l.content %}
+        <div class="lesson-content">{{ l.content }}</div>
+        {% endif %}
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            {% if l.action %}
+            <div class="lesson-action">🎯 {{ l.action }}</div>
+            {% endif %}
+            {% if l.category %}
+            <span class="badge badge-gray">{{ l.category }}</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <div class="emoji">📚</div>
+        <div>还没有记录经验</div>
+    </div>
+{% endif %}
+
+{% endblock %}

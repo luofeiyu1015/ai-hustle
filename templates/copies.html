@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}文案库 - AI副业助手{% endblock %}
+{% block content %}
+
+<div class="card">
+    <div class="card-title">✍️ 文案库</div>
+    <div style="font-size: 12px; color: var(--text-secondary);">从产品详情页点击"一键生成文案"，这里会自动保存所有生成的推广文案</div>
+</div>
+
+{% if copies %}
+    {% for c in copies %}
+    <div class="copy-card">
+        <div class="copy-header">
+            {% if c.product_id %}
+                <a href="{{ url_for('product_detail', pid=c.product_id) }}" style="font-size: 12px; color: var(--text-secondary);">
+                    🔗 产品 #{{ c.product_id }}
+                </a>
+            {% endif %}
+            <div style="display: flex; gap: 6px;">
+                <span class="copy-platform {{ 'xhs' if c.platform == '小红书' else ('xianyu' if c.platform == '闲鱼' else ('wechat' if c.platform == '朋友圈' else '')) }}">
+                    {{ c.platform }} · {{ c.type }}
+                </span>
+                <form method="POST" action="{{ url_for('copy_delete', cid=c.id) }}" onsubmit="return confirm('删除这条文案？')">
+                    <button type="submit" style="color: var(--text-light); font-size: 14px;">🗑️</button>
+                </form>
+            </div>
+        </div>
+        <div class="copy-content" onclick="event.stopPropagation()">
+            {% if c.title %}
+            <div class="copy-title">{{ c.title }}</div>
+            {% endif %}
+            <div>{{ c.body }}</div>
+            {% if c.tags %}
+            <div style="margin-top: 8px; font-size: 11px; color: var(--secondary);">{{ c.tags }}</div>
+            {% endif %}
+        </div>
+        <div class="copy-actions">
+            <button class="copy-btn" onclick="copyText(this, {{ (c.title or '')|tojson }})">📋 复制标题</button>
+            <button class="copy-btn" onclick="copyText(this, {{ (c.body or '')|tojson }})">📋 复制正文</button>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <div class="emoji">✍️</div>
+        <div>还没有文案</div>
+        <div style="font-size: 12px; margin-top: 8px;">去产品详情页点击"一键生成文案"</div>
+        <a href="{{ url_for('products_list') }}" class="btn btn-primary" style="margin-top: 16px;">📦 选择产品</a>
+    </div>
+{% endif %}
+
+{% endblock %}

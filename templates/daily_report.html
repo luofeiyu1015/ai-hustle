@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}今日报告 - AI副业助手{% endblock %}
+{% block content %}
+
+<div style="padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
+    <a href="{{ url_for('reports') }}" style="font-size: 20px;">←</a>
+    <h2 style="font-size: 16px;">📈 今日报告</h2>
+</div>
+
+<div class="report-section" style="background: linear-gradient(135deg, #FFF1E6, #FFFFFF);">
+    <div class="report-date">📅 {{ report.report_date }}</div>
+    <div class="report-grid">
+        <div class="report-block">
+            <div class="label">💰 今日收入</div>
+            <div class="value" style="color: var(--success)">¥{{ "%.2f"|format(report.revenue) }}</div>
+        </div>
+        <div class="report-block">
+            <div class="label">💸 今日支出</div>
+            <div class="value" style="color: var(--danger)">¥{{ "%.2f"|format(report.cost) }}</div>
+        </div>
+        <div class="report-block">
+            <div class="label">📈 今日净利润</div>
+            <div class="value" style="color: var(--primary); font-size: 22px;">¥{{ "%.2f"|format(report.net_profit) }}</div>
+        </div>
+        <div class="report-block">
+            <div class="label">🛒 今日销量</div>
+            <div class="value">{{ report.sales_count }} 单</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">🏆 热销产品</div>
+    <div style="font-size: 14px;">{{ report.top_product }}</div>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--warning);">
+    <div class="card-title">💡 今日经验总结</div>
+    <div style="font-size: 14px; line-height: 1.8;">{{ report.lessons_learned }}</div>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--secondary);">
+    <div class="card-title">📋 明日行动计划</div>
+    <div style="font-size: 14px; line-height: 1.8;">{{ report.tomorrow_plan }}</div>
+</div>
+
+<div class="card">
+    <div class="card-title">📜 完整报告文本</div>
+    <div class="copy-content">
+        {{ text }}
+    </div>
+    <button class="copy-btn" onclick="copyText(this, {{ text|tojson }})" style="margin-top: 10px;">📋 复制完整报告</button>
+</div>
+
+<div style="padding: 20px; text-align: center; color: var(--text-secondary); font-size: 13px;">
+    坚持就是胜利！💪 每天进步一点点，积少成多终会成功！
+</div>
+
+{% endblock %}

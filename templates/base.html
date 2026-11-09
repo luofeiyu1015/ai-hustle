@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF6B35">
+    <title>{% block title %}AI副业系统{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1><span class="logo-emoji">🚀</span> AI副业助手</h1>
+            <div class="subtitle">自动赚钱，轻松搞钱</div>
+        </header>
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="{{ url_for('index') }}" class="nav-item {% if current_page == 'home' %}active{% endif %}">
+            <span class="nav-icon">🏠</span><span>首页</span>
+        </a>
+        <a href="{{ url_for('products_list') }}" class="nav-item {% if current_page == 'products' %}active{% endif %}">
+            <span class="nav-icon">📦</span><span>产品</span>
+        </a>
+        <a href="{{ url_for('copies_list') }}" class="nav-item {% if current_page == 'copies' %}active{% endif %}">
+            <span class="nav-icon">✍️</span><span>文案</span>
+        </a>
+        <a href="{{ url_for('finance') }}" class="nav-item {% if current_page == 'finance' %}active{% endif %}">
+            <span class="nav-icon">💰</span><span>账本</span>
+        </a>
+        <a href="{{ url_for('market') }}" class="nav-item {% if current_page == 'market' or current_page == 'reports' or current_page == 'lessons' %}active{% endif %}">
+            <span class="nav-icon">📊</span><span>分析</span>
+        </a>
+    </nav>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

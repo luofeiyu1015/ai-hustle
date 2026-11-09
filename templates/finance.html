@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}财务账本 - AI副业助手{% endblock %}
+{% block content %}
+
+<!-- 汇总 -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="label">💰 总收入</div>
+        <div class="value income">¥{{ "%.2f"|format(summary.get('total_income', 0)) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">💸 总支出</div>
+        <div class="value" style="color: var(--danger)">¥{{ "%.2f"|format(summary.get('total_cost', 0)) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">📈 净利润</div>
+        <div class="value profit">¥{{ "%.2f"|format(summary.get('net_profit', 0)) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">🛒 总销量</div>
+        <div class="value">{{ summary.get('sales_count', 0) }} 单</div>
+    </div>
+</div>
+
+<!-- 30天预测 -->
+<div class="card">
+    <div class="card-title">🔮 30天收入预测</div>
+    <div class="report-grid">
+        <div class="report-block">
+            <div class="label">预计日收入</div>
+            <div class="value" style="color: var(--secondary)">¥{{ "%.2f"|format(predictions.predicted_daily_income) }}</div>
+        </div>
+        <div class="report-block">
+            <div class="label">预计30天总计</div>
+            <div class="value" style="color: var(--primary)">¥{{ "%.2f"|format(predictions.predicted_total) }}</div>
+        </div>
+    </div>
+    <div style="font-size: 12px; color: var(--text-secondary);">
+        ⚠️ {{ predictions.note }}（信心度：{{ predictions.confidence }}）
+    </div>
+</div>
+
+<!-- 快速记账 -->
+<div class="card">
+    <div class="card-title">➕ 快速记账</div>
+    <form method="POST" action="{{ url_for('finance_add') }}">
+        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+            <label style="flex: 1; padding: 10px; text-align: center; border: 2px solid var(--success); border-radius: 8px; background: #E8F8ED;">
+                <input type="radio" name="type" value="income" checked style="display: none;">
+                <div style="font-size: 20px;">💰</div>
+                <div style="font-size: 12px;">收入</div>
+            </label>
+            <label style="flex: 1; padding: 10px; text-align: center; border: 2px solid var(--border); border-radius: 8px;">
+                <input type="radio" name="type" value="expense" style="display: none;">
+                <div style="font-size: 20px;">💸</div>
+                <div style="font-size: 12px;">支出</div>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">金额（元）</label>
+            <input type="number" name="amount" class="form-control" step="0.1" placeholder="如：9.9" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">来源/用途</label>
+            <input type="text" name="description" class="form-control" placeholder="如：闲鱼卖Prompt包 / 淘宝平台费">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">平台</label>
+                <select name="platform" class="form-control">
+                    <option value="">未指定</option>
+                    <option value="闲鱼">闲鱼</option>
+                    <option value="小红书">小红书</option>
+                    <option value="淘宝">淘宝</option>
+                    <option value="拼多多">拼多多</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">关联产品</label>
+                <select name="product_id" class="form-control">
+                    <option value="">无</option>
+                    {% for p in products %}
+                    <option value="{{ p.id }}">{{ p.name[:15] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">💾 保存记录</button>
+    </form>
+</div>
+
+<!-- 交易记录 -->
+<div class="card">
+    <div class="card-title">📋 近30天记录</div>
+    {% if transactions %}
+        {% for t in transactions %}
+        <div class="transaction-item">
+            <div class="transaction-icon {{ t.type }}">
+                {% if t.type == 'income' %}💰{% else %}💸{% endif %}
+            </div>
+            <div class="transaction-info">
+                <div class="desc">{{ t.description or ('收入' if t.type == 'income' else '支出') }}</div>
+                <div class="sub">{{ t.platform or '无平台' }} · {{ (t.trans_date or '')[:10] }}</div>
+            </div>
+            <div class="transaction-amount {{ t.type }}">
+                {% if t.type == 'income' %}+{% else %}-{% endif %}¥{{ "%.2f"|format(t.amount) }}
+            </div>
+            <form method="POST" action="{{ url_for('finance_delete', tid=t.id) }}" style="margin-left: 8px;">
+                <button type="submit" style="color: var(--text-light);">✕</button>
+            </form>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="emoji">📒</div>
+            <div>还没有交易记录</div>
+            <div style="font-size: 12px; margin-top: 8px;">卖出去第一单后记得记账哦！</div>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

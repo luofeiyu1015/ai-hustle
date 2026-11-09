@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}首页 - AI副业助手{% endblock %}
+{% block content %}
+
+<!-- 快速操作 -->
+<div class="quick-actions">
+    <a href="{{ url_for('product_generate') }}" class="quick-action">
+        <div class="qa-icon">✨</div>
+        <div class="qa-text">生成产品</div>
+    </a>
+    <a href="{{ url_for('product_new') }}" class="quick-action">
+        <div class="qa-icon">📝</div>
+        <div class="qa-text">手动上架</div>
+    </a>
+    <a href="{{ url_for('daily_report') }}" class="quick-action">
+        <div class="qa-icon">📈</div>
+        <div class="qa-text">今日报告</div>
+    </a>
+</div>
+
+<!-- 统计卡片 -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="label">💰 总收入</div>
+        <div class="value income">¥{{ "%.2f"|format(summary.get('total_income', 0)) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">📈 净利润</div>
+        <div class="value profit">¥{{ "%.2f"|format(summary.get('net_profit', 0)) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">🛒 总销量</div>
+        <div class="value">{{ summary.get('sales_count', 0) }} 单</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">📦 在售产品</div>
+        <div class="value">{{ stats.get('active', 0) }} 款</div>
+    </div>
+</div>
+
+<!-- 今日报告 -->
+{% if today_report %}
+<div class="card">
+    <div class="card-title">
+        <span>📊 今日简报</span>
+        <a href="{{ url_for('daily_report') }}" class="action-link">完整报告 →</a>
+    </div>
+    <div class="report-grid">
+        <div class="report-block">
+            <div class="label">今日收入</div>
+            <div class="value" style="color: var(--success)">¥{{ "%.2f"|format(today_report.revenue) }}</div>
+        </div>
+        <div class="report-block">
+            <div class="label">今日利润</div>
+            <div class="value" style="color: var(--primary)">¥{{ "%.2f"|format(today_report.net_profit) }}</div>
+        </div>
+    </div>
+    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+        💡 {{ today_report.tomorrow_plan }}
+    </div>
+</div>
+{% endif %}
+
+<!-- 今日任务 -->
+<div class="card">
+    <div class="card-title">
+        <span>✅ 今日任务</span>
+    </div>
+    {% if tasks %}
+        {% for task in tasks %}
+        <div class="task-item">
+            <span class="task-priority priority-{{ task.priority }}">{{ task.priority }}</span>
+            <div class="task-content">
+                <div class="title">{{ task.title }}</div>
+                <div class="desc">{{ task.desc }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state"><div class="emoji">🎉</div><div>今天的任务都完成啦！</div></div>
+    {% endif %}
+</div>
+
+<!-- 在售产品 -->
+<div class="section-title">📦 在售产品</div>
+{% if products %}
+    {% for p in products %}
+    <a href="{{ url_for('product_detail', pid=p.id) }}" class="product-card">
+        <div class="product-cover">{{ p.cover_emoji }}</div>
+        <div class="product-info">
+            <h3>{{ p.name }}</h3>
+            <div class="meta">
+                <span class="price">¥{{ p.price }}</span>
+                <span>{{ p.sales_count }}单</span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <div class="emoji">📦</div>
+        <div>还没有产品，快去生成一个吧！</div>
+        <a href="{{ url_for('product_generate') }}" class="btn btn-primary" style="margin-top: 16px;">✨ 自动生成产品</a>
+    </div>
+{% endif %}
+
+<!-- 学习中心 -->
+<div class="section-title">📚 学习中心</div>
+{% if lessons %}
+    {% for l in lessons %}
+    <div class="lesson-card">
+        <div class="lesson-title">💡 {{ l.title }}</div>
+        <div class="lesson-content">{{ l.content }}</div>
+        {% if l.action %}
+        <div class="lesson-action">🎯 {{ l.action }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

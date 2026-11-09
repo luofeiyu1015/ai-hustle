@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}出错了 - AI副业助手{% endblock %}
+{% block content %}
+
+<div class="empty-state" style="padding: 80px 20px;">
+    <div class="emoji" style="font-size: 80px;">😵</div>
+    <h2 style="font-size: 24px; margin-bottom: 12px;">{{ code }} 错误</h2>
+    <div class="text" style="font-size: 15px;">{{ message }}</div>
+    <a href="{{ url_for('index') }}" class="btn btn-primary" style="margin-top: 30px;">🏠 返回首页</a>
+</div>
+
+{% endblock %}
